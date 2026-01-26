@@ -3,17 +3,22 @@ package main
 import(
 	"fmt"
 	"os"
+	"github.com/HunterRedou/pokedex/internal/pokeapi"
 )
 
-var url string = "https://pokeapi.co/api/v2/location-area"
+type config struct{
+	pokeapi *pokeapi.Client
+	next *string
+	prev *string
+}
 
-func commandExit() error{
+func commandExit(cfg *config) error{
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error{
+func commandHelp(cfg *config) error{
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -23,6 +28,34 @@ func commandHelp() error{
 	return nil
 }
 
-func commandMap(url string) error{
+func commandMap(cfg *config) error{
+	loc, err := cfg.pokeapi.GetBody(cfg.next)
+	if err != nil{
+		return err
+	}
+
+	cfg.next = loc.Next 
+	cfg.prev = loc.Previous
+
+
+	pokeapi.GetNames(loc)
+	return nil
+}
+
+func commandMapb(cfg *config) error{
+
+	if cfg.prev == nil{
+		fmt.Println("Your on the first Page")
+	}
+	loc, err := cfg.pokeapi.GetBody(cfg.prev)
+	if err != nil{
+		return err
+	}
 	
+
+	cfg.next = loc.Next
+	cfg.prev = loc.Previous
+
+	pokeapi.GetNames(loc)
+	return nil
 }

@@ -10,12 +10,12 @@ import(
 type cliCommand struct{
 	name			string
 	description 	string
-	callback		func() error
+	callback		func(*config) error
 }
 
 var commands map[string]cliCommand
 
-func startRepl() {
+func startRepl(cfg *config) {
 	commands = map[string]cliCommand{
 		"exit": {
 			name: 			"exit",
@@ -26,6 +26,16 @@ func startRepl() {
 			name:			"help",
 			description:	"Displays a help message",
 			callback: 		commandHelp,
+		},
+		"map": {
+			name:			"map",
+			description:	"Shows Area Locations",
+			callback:		commandMap,
+		},
+		"mapb": {
+			name:			"mapb",
+			description:	"Goes back to the Previous Locations",
+			callback:		commandMapb,
 		},
 	}
 
@@ -39,7 +49,7 @@ func startRepl() {
 		for n,m := range commands{
 
 			if wordSlices[0] == n{
-				m.callback()
+				m.callback(cfg)
 				found =true
 			}
 		}
