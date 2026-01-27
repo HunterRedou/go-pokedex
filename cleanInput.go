@@ -10,7 +10,7 @@ import(
 type cliCommand struct{
 	name			string
 	description 	string
-	callback		func(*config) error
+	callback		func(*config, ...string) error
 }
 
 var commands map[string]cliCommand
@@ -37,6 +37,16 @@ func startRepl(cfg *config) {
 			description:	"Goes back to the Previous Locations",
 			callback:		commandMapb,
 		},
+		"explore": {
+			name:			"explore",
+			description:	"Explores the Area Location",
+			callback:		commandExplore,
+		},
+		"catch": {
+			name:			"catch",
+			description:	"Catch a Pokemon",
+			callback:		commandCatch,
+		},
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -46,10 +56,14 @@ func startRepl(cfg *config) {
 		scanedString := scanner.Text()
 		wordSlices := cleanInput(scanedString)
 		found := false
+		args := []string{}
+		if len(wordSlices) > 1{
+			args = wordSlices[1:]
+		}
 		for n,m := range commands{
-
+			
 			if wordSlices[0] == n{
-				m.callback(cfg)
+				m.callback(cfg, args...)
 				found =true
 			}
 		}
