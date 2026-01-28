@@ -19,9 +19,22 @@ type locationNames struct{
 	}`json:"results"`
 }
 
-type Catch struct{
-	Name			string `json:"name"`
-	BaseExp		int `json:"base_experience"`
+type Catch struct {
+  Name   string `json:"name"`
+  Height int    `json:"height"`
+  Weight int    `json:"weight"`
+	BaseExp int		`json:"base_experience"`
+  Stats  []struct {
+      BaseStat int `json:"base_stat"`
+      Stat     struct {
+          Name string `json:"name"`
+        }`json:"stat"`
+    }`json:"stats"`
+  Types []struct {
+      Type struct {
+          Name string `json:"name"`
+        }`json:"type"`
+    }`json:"types"`
 }
 
 type pokemon struct{
@@ -51,6 +64,10 @@ func NewClient(httpClient *http.Client, cacheInterval time.Duration) *Client{
 func (c *Client) GetBody(pageURL *string) (locationNames, error){
 	baseUrl := "https://pokeapi.co/api/v2/location-area"
 
+	if pageURL != nil{
+		baseUrl = *pageURL
+	}
+
 	if val, ok := c.cache.Get(baseUrl); ok {
 		location := locationNames{}
 		err := json.Unmarshal(val, &location)
@@ -59,10 +76,6 @@ func (c *Client) GetBody(pageURL *string) (locationNames, error){
 		}
 
 		return location, nil
-	}
-
-	if pageURL != nil{
-		baseUrl = *pageURL
 	}
 	
 	req, err := http.NewRequest("GET", baseUrl, nil)

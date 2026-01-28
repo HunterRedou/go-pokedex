@@ -109,3 +109,39 @@ func commandCatch(cfg *config, args ...string) error{
 	return nil
 	
 }
+
+func commandInspect(cfg *config, args ...string) error{
+	if len(args) != 1{
+		fmt.Print("No Name to inspect in the Command")
+		return nil
+	}
+
+	name := args[0]
+	pokemon, ok := cfg.caughtPokemon[name]
+
+	if !ok{
+		fmt.Println("you have not caught the Pokemon")
+		return nil
+	}
+
+	fmt.Println("Name: ",pokemon.Name)
+	fmt.Println("Height: ",pokemon.Height)
+	fmt.Println("Weight: ",pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats{
+		fmt.Printf("	-%s: %d \n",stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, typeInfo := range pokemon.Types{
+		fmt.Printf("	-%s \n",typeInfo.Type.Name)
+	}
+	return nil
+
+}
+
+func commandPokedex(cfg *config, args ...string) error{
+	for key, _ := range cfg.caughtPokemon{
+		fmt.Printf("	- %s\n",key)
+	}
+	return nil
+}
